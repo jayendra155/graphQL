@@ -15,7 +15,8 @@ import org.springframework.data.neo4j.repository.config.EnableNeo4jRepositories;
 import org.springframework.data.neo4j.transaction.Neo4jTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import net.sneakyarcher.graphql.accounts.model.User;
+import net.sneakyarcher.graphql.accounts.config.Neo4JOperationsConfigurer;
+import net.sneakyarcher.graphql.accounts.model.domain.User;
 
 /**
  * @author jayendravikramsingh
@@ -24,7 +25,7 @@ import net.sneakyarcher.graphql.accounts.model.User;
  *         11/07/20
  */
 @Configuration
-@ComponentScan(basePackageClasses = { UserRepository.class, User.class })
+@ComponentScan(basePackageClasses = { UserRepository.class, User.class, Neo4JOperationsConfigurer.class })
 @EnableNeo4jRepositories(basePackageClasses = { UserRepository.class })
 @EnableTransactionManagement
 @EnableNeo4jAuditing
@@ -51,10 +52,5 @@ public class Neo4jTestConfig {
         
     }
     
-    //    @Bean
-    //    public AuditingHandler auditingEventListener(Neo4jMappingContext neo4jMappingContext) throws Exception {
-    //        return new IsNewAwareAuditingHandler(PersistentEntities.of(neo4jMappingContext));
-    //    }
-    //
 }
 

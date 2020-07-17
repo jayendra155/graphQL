@@ -1,5 +1,7 @@
 package net.sneakyarcher.graphql.accounts.service;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -22,6 +24,7 @@ public class GraphDbUserDetailsService implements UserDetailsService {
     
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return null;
+        return Optional.ofNullable(userService.getUserByUsername(username))
+                       .orElseThrow(() -> new UsernameNotFoundException(String.format("%s not found in db", username)));
     }
 }

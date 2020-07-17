@@ -1,7 +1,11 @@
-package net.sneakyarcher.graphql.accounts.model;
+package net.sneakyarcher.graphql.accounts.model.domain;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -11,6 +15,7 @@ import org.neo4j.ogm.annotation.Index;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
 import org.neo4j.ogm.annotation.Version;
+import org.neo4j.ogm.annotation.typeconversion.DateString;
 import org.neo4j.ogm.annotation.typeconversion.EnumString;
 import org.neo4j.ogm.id.InternalIdStrategy;
 import org.springframework.data.annotation.CreatedDate;
@@ -42,31 +47,43 @@ public class User implements UserDetails {
     @EnumString(value = AccountStatus.class)
     private AccountStatus accountStatus;
     
-    @Relationship(type = "hasRole", direction = Relationship.INCOMING)
+    private LocalDateTime expiryTime;
+    
+    @Relationship(type = "hasAuthority", direction = Relationship.INCOMING)
     private Set<Role> authorities;
     
     @Version
     private Long version;
     
     @CreatedDate
-    private LocalDateTime createdAt;
+    @DateString
+    private Date createdAt;
     
     @LastModifiedDate
-    private LocalDateTime updatedAt;
+    @DateString
+    private Date updatedAt;
+    
+    public Date getUpdatedAt() {
+        return Optional.ofNullable(updatedAt).flatMap(c -> Optional.ofNullable(new Date(c.getTime()))).orElse(null);
+    }
+    
+    public Date getCreatedAt() {
+        return Optional.ofNullable(createdAt).flatMap(c -> Optional.ofNullable(new Date(c.getTime()))).orElse(null);
+    }
     
     @Override
     public boolean isAccountNonExpired() {
-        return false;
+        return true;
     }
     
     @Override
     public boolean isAccountNonLocked() {
-        return false;
+        return !AccountStatus.LOCKED.equals(accountStatus);
     }
     
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        return true;
     }
     
     @Override
@@ -74,10 +91,22 @@ public class User implements UserDetails {
         return AccountStatus.ACTIVE.equals(accountStatus);
     }
     
+    public Set<Role> addAuthority(Role role) {
+        authorities = Optional.ofNullable(authorities).orElse(new HashSet<>());
+        authorities.add(role);
+        return Collections.unmodifiableSet(authorities);
+    }
+    
+    public Set<Role> addAuthority(Collection<Role> roles) {
+        authorities = Optional.ofNullable(authorities).orElse(new HashSet<>());
+        authorities.addAll(roles);
+        return Collections.unmodifiableSet(authorities);
+    }
+    
     @Override
     public String toString() {
         return "User{" + "id=" + id + ", username='" + username + '\'' + ", password='" + password + '\''
-                + ", accountStatus=" + accountStatus + ", authorities=" + authorities + ", version=" + version
-                + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + '}';
+                + ", accountStatus=" + accountStatus + ", expiryTime=" + expiryTime + ", authorities=" + authorities
+                + ", version=" + version + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + '}';
     }
 }

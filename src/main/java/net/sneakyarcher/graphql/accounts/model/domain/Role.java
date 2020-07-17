@@ -1,7 +1,8 @@
-package net.sneakyarcher.graphql.accounts.model;
+package net.sneakyarcher.graphql.accounts.model.domain;
 
 import org.neo4j.ogm.annotation.GeneratedValue;
 import org.neo4j.ogm.annotation.Id;
+import org.neo4j.ogm.annotation.Index;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.springframework.security.core.GrantedAuthority;
 import lombok.Data;
@@ -20,6 +21,7 @@ public class Role implements GrantedAuthority {
     @GeneratedValue
     private Long id;
     
+    @Index(unique = true)
     private String authority;
     
     private String desc;

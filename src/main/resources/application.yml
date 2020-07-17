@@ -1,1 +1,24 @@
 
+spring:
+  application:
+    name: accounts
+  data:
+    neo4j:
+      uri: neo4j://localhost:7687
+      username: accounts
+      password: password
+
+management:
+  endpoints:
+    enabled-by-default: true
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+  info:
+    git:
+      enabled: true
+    build:
+      enabled: true

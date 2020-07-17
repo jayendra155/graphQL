@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import lombok.extern.slf4j.Slf4j;
+import net.sneakyarcher.graphql.accounts.model.Credentials;
 
 /**
  * @author jayendravikramsingh
@@ -20,8 +21,12 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @RestController
-@RequestMapping("/data")
-public class TestController {
+@RequestMapping("/signin")
+public class SigninController {
     
+    @PostMapping
+    public ResponseEntity signinCall(@RequestBody Credentials credentials) {
+        return null;
+    }
 
 }

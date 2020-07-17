@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml" />
+    ​
+    <springProperty scope="context" name="springAppName" source="spring.application.name" />
+    <springProperty scope="context" name="profile" source="spring.profiles.active" />
+    <!-- Example for logging into the build folder of your project -->
+    <property name="LOG_PATH" value="${log.path:-logs}" />
+    <property name="LOG_FILE" value="${LOG_PATH}/${springAppName:-accounts}" />
+    <property name="ARCHIVE_PATH" value="${LOG_PATH}/archive" />
+    <property name="ARCHIVE_FILE" value="${ARCHIVE_PATH}/${springAppName:-accounts}" />
+    <property name="ACCESS_LOG_PATH" value="${LOG_PATH}/accessLogs" />
+    ​
+
+    <!-- You can override this to have a custom pattern -->
+    <property name="CONSOLE_LOG_PATTERN"
+              value="%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}" />
+
+    <!-- Appender to log to console -->
+<!--    <springProfile name="!local">-->
+<!--        <appender name="console"-->
+<!--                  class="ch.qos.logback.core.ConsoleAppender">-->
+<!--            <encoder-->
+<!--                    class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">-->
+<!--                <providers>-->
+<!--                    <timestamp>-->
+<!--                        <timeZone>UTC</timeZone>-->
+<!--                    </timestamp>-->
+<!--                    <pattern>-->
+<!--                        <pattern>-->
+<!--                            {-->
+<!--                            "severity": "%level",-->
+<!--                            "appType": "java",-->
+<!--                            "service": "${springAppName:-accounts}",-->
+<!--                            "trace": "%X{X-B3-TraceId:-}",-->
+<!--                            "span": "%X{X-B3-SpanId:-}",-->
+<!--                            "parent": "%X{X-B3-ParentSpanId:-}",-->
+<!--                            "exportable": "%X{X-Span-Export:-}",-->
+<!--                            "pid": "${PID:-}",-->
+<!--                            "thread": "%thread",-->
+<!--                            "class": "%logger{40}",-->
+<!--                            "message": "%msg%ex{full}"-->
+<!--                            } </pattern>-->
+<!--                    </pattern>-->
+<!--                </providers>-->
+<!--            </encoder>-->
+<!--        </appender>-->
+<!--    </springProfile>-->
+<!--    <springProfile name="local">-->
+        <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+            <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+                <!-- Minimum logging level to be presented in the console logs -->
+                <level>DEBUG</level>
+            </filter>
+            <encoder>
+                <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+                <charset>utf8</charset>
+            </encoder>
+        </appender>
+
+<!--    </springProfile>-->
+
+    <!-- Appender to log to file -->
+    ​
+    <appender name="file"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_FILE}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${ARCHIVE_FILE}.%d{yyyy-MM-dd-HH}.log.gz
+            </fileNamePattern>
+            <maxHistory>52</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+            <charset>utf8</charset>
+        </encoder>
+    </appender>
+    ​
+        <logger name =  "org.springframework.security" level="debug" />
+
+    <root level="INFO">
+        <appender-ref ref="file" />
+        <!-- uncomment this to have also JSON logs -->
+        <!--<appender-ref ref="logstash"/> -->
+        <appender-ref ref="console" />
+    </root>
+
+</configuration>

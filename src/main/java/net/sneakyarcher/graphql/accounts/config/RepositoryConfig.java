@@ -1,11 +1,12 @@
 package net.sneakyarcher.graphql.accounts.config;
 
+import org.springframework.context.annotation.Configuration;
 import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
 import org.springframework.data.rest.core.mapping.ExposureConfiguration;
 import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurer;
 import org.springframework.http.HttpMethod;
-import net.sneakyarcher.graphql.accounts.model.Role;
-import net.sneakyarcher.graphql.accounts.model.User;
+import net.sneakyarcher.graphql.accounts.model.domain.Role;
+import net.sneakyarcher.graphql.accounts.model.domain.User;
 
 /**
  * @author jayendravikramsingh
@@ -13,6 +14,7 @@ import net.sneakyarcher.graphql.accounts.model.User;
  *         <p>
  *         10/07/20
  */
+@Configuration
 public class RepositoryConfig implements RepositoryRestConfigurer {
     
     @Override

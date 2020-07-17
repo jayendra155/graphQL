@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import lombok.extern.slf4j.Slf4j;
-import net.sneakyarcher.graphql.accounts.model.User;
+import net.sneakyarcher.graphql.accounts.model.domain.User;
 import net.sneakyarcher.graphql.accounts.repository.UserRepository;
 
 /**
