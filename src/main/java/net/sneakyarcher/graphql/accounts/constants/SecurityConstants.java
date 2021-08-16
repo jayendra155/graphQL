@@ -11,4 +11,5 @@ public interface SecurityConstants {
     String TOKEN_PREFIX = "Bearer ";
     String JWT_AUTH_HEADER_KEY = "Authorization";
     String SECRET = "helloworld";
+    String REMEMBER_ME_SECRET = "hello123";
 }

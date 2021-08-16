@@ -1,5 +1,7 @@
 package net.sneakyarcher.graphql.accounts.config;
 
+import static net.sneakyarcher.graphql.accounts.constants.SecurityConstants.REMEMBER_ME_SECRET;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,7 +20,10 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import lombok.extern.slf4j.Slf4j;
 import net.sneakyarcher.graphql.accounts.filter.JWTAuthenticationFilter;
 import net.sneakyarcher.graphql.accounts.filter.JWTAuthorizationFilter;
+import net.sneakyarcher.graphql.accounts.filter.ProceedingRememberMeAuthenticationFilter;
+import net.sneakyarcher.graphql.accounts.repository.Neo4jPersistentTokenRepository;
 import net.sneakyarcher.graphql.accounts.service.GraphDbUserDetailsService;
+import net.sneakyarcher.graphql.accounts.service.PersistentJwtTokenBasedRememberMeServices;
 
 /**
  * @author jayendravikramsingh
@@ -36,6 +41,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public BCryptPasswordEncoder passwordEncoder;
     
     @Autowired
+    private Neo4jPersistentTokenRepository neo4jPersistentTokenRepository;
+    
+    @Autowired
     private GraphDbUserDetailsService graphDbUserDetailsService;
     
     @Override
@@ -45,12 +53,29 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                              .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
             .authorizeRequests()
-            .antMatchers(HttpMethod.GET, "/actuator/**", "/api/**").permitAll()
+            .antMatchers(HttpMethod.GET, "/actuator/**", "/api/**", "/dummy/**").permitAll()
             .antMatchers(HttpMethod.POST, "/actuator/**").hasRole("APP_MANAGER")
             .anyRequest().authenticated()
             .and()
+            .addFilter(new ProceedingRememberMeAuthenticationFilter(authenticationManager(),
+                                                                    new PersistentJwtTokenBasedRememberMeServices(
+                                                                            REMEMBER_ME_SECRET,
+                                                                            graphDbUserDetailsService,
+                                                                            neo4jPersistentTokenRepository)))
             .addFilter(new JWTAuthenticationFilter(authenticationManager(), getApplicationContext()))
-            .addFilter(new JWTAuthorizationFilter(authenticationManager()));
+//            .rememberMe(httpSecurityRememberMeConfigurer -> {
+//                httpSecurityRememberMeConfigurer.tokenValiditySeconds(180 * 24 * 60 * 60);
+//                httpSecurityRememberMeConfigurer.alwaysRemember(true);
+//                httpSecurityRememberMeConfigurer.rememberMeCookieName("remember-me");
+//                httpSecurityRememberMeConfigurer.tokenRepository(neo4jPersistentTokenRepository);
+//                httpSecurityRememberMeConfigurer.key(REMEMBER_ME_SECRET);
+//                httpSecurityRememberMeConfigurer.rememberMeCookieDomain("sample.me");
+//                httpSecurityRememberMeConfigurer.userDetailsService(graphDbUserDetailsService);
+//                httpSecurityRememberMeConfigurer.rememberMeParameter("remember-me");
+//                httpSecurityRememberMeConfigurer.useSecureCookie(false);
+//            })
+            .addFilter(new JWTAuthorizationFilter(authenticationManager()))
+            ;
         //@formatter:on
     }
     

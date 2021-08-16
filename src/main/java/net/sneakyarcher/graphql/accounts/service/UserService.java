@@ -21,6 +21,7 @@ public class UserService {
     private UserRepository userRepository;
     
     public User getUserByUsername(String username) {
+        log.info("Searching for user with username: {}", username);
         return this.userRepository.findByUsername(username).orElseThrow(
                 () -> new UsernameNotFoundException(String.format("%s username not found.", username)));
     }

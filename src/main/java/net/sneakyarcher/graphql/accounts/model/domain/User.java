@@ -49,7 +49,7 @@ public class User implements UserDetails {
     
     private LocalDateTime expiryTime;
     
-    @Relationship(type = "hasAuthority", direction = Relationship.INCOMING)
+    @Relationship(type = "hasAuthority", direction = Relationship.OUTGOING)
     private Set<Role> authorities;
     
     @Version

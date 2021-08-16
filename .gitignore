@@ -30,3 +30,7 @@ bin
 *.db/
 build/
 out/
+logs/
+
+**/.DS_Store
+src/main/generated/

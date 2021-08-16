@@ -76,7 +76,7 @@
         </encoder>
     </appender>
     ​
-        <logger name =  "org.springframework.security" level="debug" />
+<!--        <logger name =  "org.springframework.security" level="debug" />-->
 
     <root level="INFO">
         <appender-ref ref="file" />
